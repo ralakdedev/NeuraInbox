@@ -1,0 +1,60 @@
+# app.yaml for Chatwoot on DigitalOcean App Platform
+name: neurainbox # The name of your App Platform app
+services:
+  - name: web # The main web service
+    dockerfile_path: docker/Dockerfile # Points to your Dockerfile location
+    source_dir: . # Build context is the root of the repository
+    instance_count: 1
+    instance_size_slug: basic-s # e.g., basic-s, basic-m, professional-s (adjust as needed)
+    health_check:
+      http_path: /api/v1/status # Adjust if Chatwoot has a different health endpoint
+      initial_delay_seconds: 60
+      period_seconds: 30
+      timeout_seconds: 10
+      failure_threshold: 3
+    routes:
+      - path: /
+    envs:
+      - key: SECRET_TOKEN
+        scope: RUN_TIME
+        type: SECRET # This will prompt you to set it securely in DO UI
+      - key: RAILS_ENV
+        value: production
+      - key: RACK_ENV
+        value: production
+      - key: FRONTEND_URL
+        value: ${APP_URL} # DigitalOcean's dynamic variable for the app's URL
+      - key: INSTALLATION_ENV
+        value: digitalocean
+      - key: REDIS_OPENSSL_VERIFY_MODE
+        value: "none" # Consistent with your app.json
+      - key: ENABLE_ACCOUNT_SIGNUP
+        value: "true" # This enables the public signup page
+
+  - name: worker # Background worker service for Sidekiq
+    dockerfile_path: docker/Dockerfile # Points to your Dockerfile location
+    source_dir: . # Build context is the root of the repository
+    instance_count: 1
+    instance_size_slug: basic-s # Adjust based on worker load
+    run_command: bundle exec sidekiq -C config/sidekiq.yml # Command to run the Sidekiq worker
+    envs:
+      # Include any environment variables required by the worker, similar to web service
+      - key: SECRET_TOKEN
+        scope: RUN_TIME
+        type: SECRET
+      - key: RAILS_ENV
+        value: production
+      - key: FRONTEND_URL
+        value: ${APP_URL}
+      - key: REDIS_OPENSSL_VERIFY_MODE
+        value: "none"
+
+databases:
+  - name: neura-db # Name for your PostgreSQL database
+    engine: PG # PostgreSQL
+    version: "15" # You can specify a version, e.g., "14" or "15"
+    num_nodes: 1 # Number of database nodes
+
+redis_databases:
+  - name: neura-redis # Name for your Redis instance
+    version: "7" # Redis version, e.g., "6" or "7"
