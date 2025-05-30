@@ -36,6 +36,11 @@
     "REDIS_OPENSSL_VERIFY_MODE":{
       "description": "OpenSSL verification mode for Redis connections. ref https://help.heroku.com/HC0F8CUS/redis-connection-issues",
       "value": "none"
+    },
+    "ENABLE_ACCOUNT_SIGNUP": {
+      "description": "Set to 'true' to allow public sign-ups for new accounts on your Chatwoot instance.",
+      "required": false,
+      "value": "true"
     }
   },
   "formation": {
