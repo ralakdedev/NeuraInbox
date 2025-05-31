@@ -8,7 +8,7 @@ import {
 import { dispatchWindowEvent } from 'shared/helpers/CustomEventHelper';
 
 export const bubbleSVG =
-  'M 45 153 H 170 C 33 234 3.4569 187.562 3.4569 122.122 C 3.4569 56.7031 56.6994 3.457 122.124 3.457 C 187.566 3.457 240.808 56.7031 171 191 V 106 Z';
+  'M 127 235 L 126 215 C 56.6994 240.808 3.4569 187.562 3.4569 122.122 C 3.4569 56.7031 56.6994 3.457 122 3 C 187.566 3.457 327 148 128 235 Z';
 
 export const body = document.getElementsByTagName('body')[0];
 export const widgetHolder = document.createElement('div');
